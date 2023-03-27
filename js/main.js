@@ -4,10 +4,17 @@ const score2EL = document.querySelector('#score--2');
 const btnRoll = document.querySelector('#btn--roll');
 const btnNew = document.querySelector('#btn--new');
 const btnHold = document.querySelector('#btn--hold');
+const btnSave = document.querySelector('#btn--save');
+const btnWinners = document.querySelector('#btn--winners');
 const currentScoreEL1 = document.querySelector('#current--score--1');
 const currentScoreEL2 = document.querySelector('#current--score--2');
 const player1EL = document.querySelector('#player--1');
 const player2EL = document.querySelector('#player--2');
+const nameEL = document.querySelector('#name');
+const saveEL = document.querySelector('#save--winner');
+
+const bestItemsArray = document.querySelectorAll('#best--item');
+const bestItemsEL = document.querySelector('#best--items');
 
 //Initialisation
 diceEL.src = '';
@@ -18,6 +25,7 @@ let currentPlayer = 1;
 let scorePlayer1 = 0;
 let scorePlayer2 = 0;
 let play = true;
+let winners = [];
 
 btnRoll.addEventListener('click', function () {
   if (play === false) return;
@@ -56,6 +64,43 @@ btnHold.addEventListener('click', () => {
   }
 });
 
+btnNew.addEventListener('click', () => {
+  diceEL.src = '';
+  score1EL.textContent = 0;
+  score2EL.textContent = 0;
+  currentScore = 0;
+  currentPlayer = 1;
+  scorePlayer1 = 0;
+  scorePlayer2 = 0;
+  play = true;
+  player1EL.classList.remove('winner');
+  player2EL.classList.remove('winner');
+  player1EL.classList.add('active');
+  player2EL.classList.remove('active');
+});
+
+btnSave.addEventListener('click', () => {
+  const winner = {
+    name: nameEL.value,
+    score: currentPlayer === 1 ? scorePlayer1 : scorePlayer2,
+  };
+
+  winners.push(winner);
+
+  winners.sort((a, b) => (a.score > b.score ? -1 : 1));
+
+  winners = winners.slice(0, 5);
+  console.log(winners);
+  saveEL.style.display = 'none';
+});
+
+btnWinners.addEventListener('click', () => {
+  bestItemsEL.style.display = 'flex';
+  for (i = 0; i < winners.length; i++) {
+    bestItemsArray[i].textContent = winners[i].name + '----' + winners[i].score;
+  }
+});
+
 const winner = (score) => {
   if (score >= 20) {
     //end game
@@ -68,6 +113,7 @@ const winner = (score) => {
     currentScoreEL2.textContent = 0;
     diceEL.src = '';
     play = false;
+    saveEL.style.display = 'flex';
   } else {
     //switch player
     switchPalyer();
